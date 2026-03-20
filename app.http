@@ -1,0 +1,213 @@
+## Global Variabel
+#@BaseUrl = https://pam-2026-ifs23042-proyek1-be.delcom.org:8080
+@BaseUrl = http://127.0.0.1:8080
+
+### ---------------------------------------
+## Auth
+### ---------------------------------------
+
+### Melakukan pendaftaran
+# @name PostRegister
+POST {{BaseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Tester",
+  "email": "tester@email.com",
+  "password": "tester123"
+}
+
+### Masuk ke layanan
+# @name PostLogin
+POST {{BaseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "tester@email.com",
+  "password": "tester123"
+}
+
+> {%
+    client.global.set("authToken", response.body.data.authToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+### Refresh Token
+# @name PostRefreshToken
+POST {{BaseUrl}}/auth/refresh-token
+Content-Type: application/json
+
+{
+  "authToken": "{{authToken}}",
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {%
+    client.global.set("authToken", response.body.data.authToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+### Keluar dari layanan
+# @name PostLogout
+POST {{BaseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+  "authToken": "{{authToken}}"
+}
+
+### ---------------------------------------
+## Users
+### ---------------------------------------
+
+### Mengambil informasi akun
+# @name GetUserMe
+GET {{BaseUrl}}/users/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+> {%
+    client.global.set("userId", response.body.data.user.id);
+%}
+
+### Mengubah informasi akun
+# @name PutUserMe
+PUT {{BaseUrl}}/users/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Tester Update",
+  "email": "tester@email.com"
+}
+
+### Mengubah kata sandi akun
+# @name PutUserMePassword
+PUT {{BaseUrl}}/users/me/password
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "password": "tester123",
+  "newPassword": "tester123"
+}
+
+### Mengubah photo profile
+# @name PutUserMePhoto
+PUT {{BaseUrl}}/users/me/photo
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="example.png"
+Content-Type: image/png
+
+< ./uploads/examples/me.png
+--WebAppBoundary--
+
+### ---------------------------------------
+## Wisata
+### ---------------------------------------
+
+### Mengambil semua data wisata
+# @name GetWisata
+GET {{BaseUrl}}/wisata?search=&kategori=&page=1&limit=10
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+### Menambahkan wisata
+# @name PostWisata
+POST {{BaseUrl}}/wisata
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nama": "Danau Toba",
+  "lokasi": "Sumatera Utara",
+  "deskripsi": "Danau vulkanik terbesar di dunia",
+  "kategori": "Alam"
+}
+
+> {%
+    client.global.set("wisataId", response.body.data.wisataId);
+%}
+
+### Mengambil wisata berdasarkan id
+# @name GetWisataById
+GET {{BaseUrl}}/wisata/{{wisataId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+### Mengubah wisata
+# @name PutWisata
+PUT {{BaseUrl}}/wisata/{{wisataId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "nama": "Danau Toba Update",
+  "lokasi": "Sumatera Utara",
+  "deskripsi": "Danau vulkanik terbesar di dunia",
+  "kategori": "Alam"
+}
+
+### Mengubah foto wisata
+# @name PutWisataFoto
+PUT {{BaseUrl}}/wisata/{{wisataId}}/foto
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="example.png"
+Content-Type: image/png
+
+< ./uploads/examples/me.png
+--WebAppBoundary--
+
+### Menghapus wisata
+# @name DeleteWisata
+DELETE {{BaseUrl}}/wisata/{{wisataId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+### ---------------------------------------
+## Reviews
+### ---------------------------------------
+
+### Mengambil semua review wisata
+# @name GetReviews
+GET {{BaseUrl}}/wisata/{{wisataId}}/reviews
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+### Menambahkan review
+# @name PostReview
+POST {{BaseUrl}}/wisata/{{wisataId}}/reviews
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "komentar": "Tempat yang sangat indah!"
+}
+
+> {%
+    client.global.set("reviewId", response.body.data.reviewId);
+%}
+
+### Mengubah review
+# @name PutReview
+PUT {{BaseUrl}}/wisata/{{wisataId}}/reviews/{{reviewId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "komentar": "Tempat yang indah tapi agak ramai!"
+}
+
+### Menghapus review
+# @name DeleteReview
+DELETE {{BaseUrl}}/wisata/{{wisataId}}/reviews/{{reviewId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
