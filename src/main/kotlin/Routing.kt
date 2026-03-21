@@ -68,6 +68,16 @@ fun Application.configureRouting() {
             }
         }
 
+        // Route Wisata PUBLIC (tanpa token)
+        route("/wisata") {
+            get {
+                wisataService.getAll(call)
+            }
+            get("/{id}") {
+                wisataService.getById(call)
+            }
+        }
+
         authenticate(JWTConstants.NAME) {
             // Route User
             route("/users") {
@@ -85,16 +95,10 @@ fun Application.configureRouting() {
                 }
             }
 
-            // Route Wisata
+            // Route Wisata PRIVATE (butuh token)
             route("/wisata") {
-                get {
-                    wisataService.getAll(call)
-                }
                 post {
                     wisataService.post(call)
-                }
-                get("/{id}") {
-                    wisataService.getById(call)
                 }
                 put("/{id}") {
                     wisataService.put(call)
