@@ -8,6 +8,8 @@ import io.ktor.util.cio.*
 import io.ktor.utils.io.*
 import org.delcom.data.AppException
 import org.delcom.data.DataResponse
+import org.delcom.data.WisataDetailResponse
+import org.delcom.data.WisataListResponse
 import org.delcom.data.WisataRequest
 import org.delcom.helpers.ServiceHelper
 import org.delcom.helpers.ValidatorHelper
@@ -16,7 +18,6 @@ import org.delcom.repositories.IUserRepository
 import org.delcom.repositories.IWisataRepository
 import java.io.File
 import java.util.*
-import org.delcom.data.WisataListResponse
 
 class WisataService(
     private val userRepo: IUserRepository,
@@ -55,17 +56,16 @@ class WisataService(
         val avgRating = reviewRepo.getAverageRating(wisataId)
         val reviews = reviewRepo.getByWisataId(wisataId)
 
-        call.respond(
-            mapOf(
-                "status" to "success",
-                "message" to "Berhasil mengambil data wisata",
-                "data" to mapOf(
-                    "wisata" to wisata,
-                    "rataRating" to avgRating,
-                    "reviews" to reviews
-                )
+        val response = DataResponse(
+            "success",
+            "Berhasil mengambil data wisata",
+            WisataDetailResponse(
+                wisata = wisata,
+                rataRating = avgRating,
+                reviews = reviews
             )
         )
+        call.respond(response)
     }
 
     suspend fun post(call: ApplicationCall) {
