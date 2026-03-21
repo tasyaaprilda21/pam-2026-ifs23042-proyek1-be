@@ -16,6 +16,7 @@ import org.delcom.repositories.IUserRepository
 import org.delcom.repositories.IWisataRepository
 import java.io.File
 import java.util.*
+import org.delcom.data.WisataListResponse
 
 class WisataService(
     private val userRepo: IUserRepository,
@@ -31,18 +32,17 @@ class WisataService(
         val wisataList = wisataRepo.getAll(search, kategori, page, limit)
         val total = wisataRepo.getTotalCount(search, kategori)
 
-        call.respond(
-            mapOf(
-                "status" to "success",
-                "message" to "Berhasil mengambil daftar wisata",
-                "data" to mapOf(
-                    "wisata" to wisataList,
-                    "total" to total,
-                    "page" to page,
-                    "limit" to limit
-                )
+        val response = DataResponse(
+            "success",
+            "Berhasil mengambil daftar wisata",
+            WisataListResponse(
+                wisata = wisataList,
+                total = total,
+                page = page,
+                limit = limit
             )
         )
+        call.respond(response)
     }
 
     suspend fun getById(call: ApplicationCall) {
