@@ -55,16 +55,17 @@ class WisataService(
         val avgRating = reviewRepo.getAverageRating(wisataId)
         val reviews = reviewRepo.getByWisataId(wisataId)
 
-        val response = DataResponse(
-            "success",
-            "Berhasil mengambil data wisata",
+        call.respond(
             mapOf(
-                "wisata" to wisata,
-                "rataRating" to avgRating,
-                "reviews" to reviews
+                "status" to "success",
+                "message" to "Berhasil mengambil data wisata",
+                "data" to mapOf(
+                    "wisata" to wisata,
+                    "rataRating" to avgRating,
+                    "reviews" to reviews
+                )
             )
         )
-        call.respond(response)
     }
 
     suspend fun post(call: ApplicationCall) {
