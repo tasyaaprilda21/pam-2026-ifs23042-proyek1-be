@@ -31,17 +31,18 @@ class WisataService(
         val wisataList = wisataRepo.getAll(search, kategori, page, limit)
         val total = wisataRepo.getTotalCount(search, kategori)
 
-        val response = DataResponse(
-            "success",
-            "Berhasil mengambil daftar wisata",
+        call.respond(
             mapOf(
-                "wisata" to wisataList,
-                "total" to total,
-                "page" to page,
-                "limit" to limit
+                "status" to "success",
+                "message" to "Berhasil mengambil daftar wisata",
+                "data" to mapOf(
+                    "wisata" to wisataList,
+                    "total" to total,
+                    "page" to page,
+                    "limit" to limit
+                )
             )
         )
-        call.respond(response)
     }
 
     suspend fun getById(call: ApplicationCall) {
