@@ -5,6 +5,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import org.delcom.data.AppException
 import org.delcom.data.DataResponse
+import org.delcom.data.ReviewListResponse
 import org.delcom.data.ReviewRequest
 import org.delcom.helpers.ServiceHelper
 import org.delcom.helpers.ValidatorHelper
@@ -30,9 +31,9 @@ class ReviewService(
         val response = DataResponse(
             "success",
             "Berhasil mengambil daftar review",
-            mapOf(
-                "reviews" to reviews,
-                "rataRating" to avgRating
+            ReviewListResponse(
+                reviews = reviews,
+                rataRating = avgRating
             )
         )
         call.respond(response)
